@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Valentine 💜</title>
+
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #5f2c82, #8e44ad);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  .card {
+    background: white;
+    width: 90%;
+    max-width: 350px;
+    height: 300px;
+    border-radius: 20px;
+    text-align: center;
+    padding: 25px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    position: relative;
+  }
+
+  h1 {
+    font-size: 22px;
+    margin-bottom: 50px;
+    color: #5f2c82;
+  }
+
+  button {
+    border: none;
+    border-radius: 14px;
+    font-size: 18px;
+    padding: 14px 26px;
+    position: absolute;
+    cursor: pointer;
+  }
+
+  #yes {
+    background: #a855f7;
+    color: white;
+    left: 30px;
+    bottom: 40px;
+    box-shadow: 0 0 15px rgba(168,85,247,0.8),
+                0 0 30px rgba(168,85,247,0.6),
+                0 0 45px rgba(168,85,247,0.4);
+    animation: glow 2s infinite alternate;
+    transform-origin: center;
+  }
+
+  @keyframes glow {
+    from {
+      box-shadow: 0 0 10px rgba(168,85,247,0.6),
+                  0 0 20px rgba(168,85,247,0.4);
+    }
+    to {
+      box-shadow: 0 0 25px rgba(168,85,247,1),
+                  0 0 50px rgba(168,85,247,0.8);
+    }
+  }
+
+  #no {
+    background: #e5e5e5;
+    color: #333;
+    right: 30px;
+    bottom: 40px;
+  }
+
+  .heart {
+    position: absolute;
+    color: #c084fc;
+    font-size: 22px;
+    animation: floatUp 3s linear forwards;
+  }
+
+  @keyframes floatUp {
+    from {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+    to {
+      transform: translateY(-600px) scale(1.6);
+      opacity: 0;
+    }
+  }
+</style>
+</head>
+
+<body>
+
+<div class="card">
+  <h1>Vrei să fii Valentine-ul meu? 💜</h1>
+  <button id="yes">DA 💖</button>
+  <button id="no">NU</button>
+</div>
+
+<audio id="music" src="bloody-valentine.mp3"></audio>
+
+<script>
+  const yesBtn = document.getElementById("yes");
+  const noBtn = document.getElementById("no");
+  const card = document.querySelector(".card");
+  const music = document.getElementById("music");
+
+  let noClickedOnce = false;
+  let pulseInterval = null;
+  let scaleUp = true;
+
+  // schimbă textul la primul click
+  noBtn.addEventListener("click", () => {
+    if (!noClickedOnce) {
+      noBtn.textContent = "Ești sigură?";
+      noClickedOnce = true;
+    }
+  });
+
+  // NU fuge, dar doar în jumătatea dreaptă
+  function moveNo() {
+    const cardWidth = card.clientWidth;
+    const cardHeight = card.clientHeight;
+
+    const minX = cardWidth / 2;
+    const maxX = cardWidth - noBtn.clientWidth - 10;
+
+    const minY = 80;
+    const maxY = cardHeight - noBtn.clientHeight - 20;
+
+    const x = Math.random() * (maxX - minX) + minX;
+    const y = Math.random() * (maxY - minY) + minY;
+
+    noBtn.style.left = x + "px";
+    noBtn.style.top = y + "px";
+  }
+
+  noBtn.addEventListener("mouseover", moveNo);
+  noBtn.addEventListener("touchstart", moveNo);
+
+  yesBtn.addEventListener("click", () => {
+    music.play();
+
+    if (navigator.vibrate) {
+      navigator.vibrate([100, 50, 100]);
+    }
+
+    createHearts();
+    startPulse();
+
+    setTimeout(() => {
+      alert("Știam eu… 💜 Happy Valentine’s Day!");
+    }, 600);
+  });
+
+  function startPulse() {
+    if (pulseInterval) return;
+
+    pulseInterval = setInterval(() => {
+      yesBtn.style.transform = scaleUp ? "scale(1.15)" : "scale(1)";
+      scaleUp = !scaleUp;
+
+      if (navigator.vibrate) {
+        navigator.vibrate(30);
+      }
+    }, 500);
+  }
+
+  function createHearts() {
+    for (let i = 0; i < 35; i++) {
+      const heart = document.createElement("div");
+      heart.classList.add("heart");
+      heart.innerHTML = "💜";
+      heart.style.left = Math.random() * window.innerWidth + "px";
+      heart.style.bottom = "0px";
+      heart.style.fontSize = (16 + Math.random() * 28) + "px";
+      document.body.appendChild(heart);
+
+      setTimeout(() => heart.remove(), 3000);
+    }
+  }
+</script>
+
+</body>
+</html>
